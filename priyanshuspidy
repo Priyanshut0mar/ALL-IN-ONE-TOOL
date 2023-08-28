@@ -1,0 +1,326 @@
+from tkinter import *
+import tkinter as tk
+import tkinter.messagebox as msg
+import mysql.connector as mysql
+from gtts import gTTS
+from playsound import playsound
+from PIL import Image, ImageTk
+
+#login option
+class LogWind:
+    def __init__(pal,project):
+        pal.project=project
+        pal.project.geometry("1800x1800")
+        pal.project.config(bg="light green")
+        Lb1=Button(pal.project,text="REGISTER",padx=37,pady=15,bg="blue",font=("Mohave",15,'bold'),relief='sunken',command=pal.register)
+        Lb1.place(x=874,y=400)
+        Lb2=Button(pal.project,text="LOGIN",padx=56,pady=15,bg="blue",font=("Mohave",15,'bold'),relief='sunken',command=pal.login)
+        Lb2.place(x=874,y=300)
+        Lb3=Button(pal.project,text="-INFO-",padx=57,pady=15,bg="blue",font=("Mohave",15,'bold'),relief='sunken',command=pal.info)
+        Lb3.place(x=874,y=200)
+        Lb5=Button(pal.project,text="SUGGESTION",padx=22.5,pady=15,bg="blue",font=("Mohave",15,'bold'),relief='sunken',command=pal.suggestion)
+        Lb5.place(x=874,y=500)
+
+        
+#--------------------XXXXXXXXXXXX--------------------XXXXXX-------------------
+        
+#register page     
+        
+    def register(pal):
+            registerwind=Tk()
+            registerwind.title("REGISTRATION")
+            registerwind.geometry("1800x1800")
+            registerwind.config(bg="yellow")
+
+
+            textreg=Label(registerwind,text=".............REGISTER PAGE............. ",bg="white",padx=30,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+            textreg.place(x=610,y=90)
+        
+
+            usernamel1=Label(registerwind,text="USERNAME",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+            usernamel1.place(x=650,y=250)
+
+            passwordl2=Label(registerwind,text="PASSWORD",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+            passwordl2.place(x=650,y=350)
+
+            Emailidl3=Label(registerwind,text="EMAIL ID",bg="skyblue",padx=32,pady=15,font=('calibri',12,'bold'),relief='groove')
+            Emailidl3.place(x=650,y=450)
+
+            pal.usernameEntry=Entry(registerwind,font=('bold','20'))
+            pal.usernameEntry.place(x=800,y=260,width=150,height=30)
+
+            pal.passwordEntry=Entry(registerwind,font=('bold','20'))
+            pal.passwordEntry.place(x=800,y=360,width=150,height=30)
+
+            pal.EmailEntry=Entry(registerwind,font=('bold','20'))
+            pal.EmailEntry.place(x=800,y=460,width=150,height=30)
+
+            SubmitRegist=Button(registerwind,text="REGISTER",padx=37,pady=10,font=("calibri",20,'bold'),relief="groove",fg='black',command=pal.register_pj)
+            SubmitRegist.place(x=700,y=550)
+#----------------XXXXXXXXX--------------XXXXXXXX---------------
+
+#login page
+        
+    def login(pal):
+                loginwind=Tk()
+                loginwind.title("LOGIN PAGE")
+                loginwind.geometry("1800x1800")
+                loginwind.config(bg="yellow")
+
+                
+                textlog=Label(loginwind,text="...........LOGIN PAGE.......... ",bg="white",padx=30,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+                textlog.place(x=630,y=90)
+
+                usernamel1=Label(loginwind,text="USERNAME",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+                usernamel1.place(x=650,y=250)
+
+                passwordl2=Label(loginwind,text="PASSWORD",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+                passwordl2.place(x=650,y=350)
+
+
+                pal.LusernameEntry=Entry(loginwind,font=('bold','20'))
+                pal.LusernameEntry.place(x=800,y=260,width=150,height=30)
+
+                pal.LpasswordEntry=Entry(loginwind,font=('bold','20'),show='*')
+                pal.LpasswordEntry.place(x=800,y=360,width=150,height=30)
+
+
+                SubmitLogin=Button(loginwind,text="LOGIN",padx=37,pady=10,font=("calibri",20,'bold'),relief="groove",fg='blue',command=pal.loginpg)
+                SubmitLogin.place(x=725,y=450)
+
+                
+
+               
+   
+        
+  
+        
+        
+
+#--------------XXXXX-----------------------XXXXXXX-------------------------------               
+
+#REGISTERPAGE CONNECTION
+                
+    def register_pj(pal):
+        cont=mysql.connect(host='localhost',user='root',password='123456',database='register_login')
+        cursor=cont.cursor()
+        
+        username=pal.usernameEntry.get()
+        password=pal.passwordEntry.get()
+        email=pal.EmailEntry.get()
+
+        cursor.execute("insert into register values(%s,%s,%s)",(username,password,email))
+        cont.commit()
+        cont.close()
+        msg.showinfo("REGISTERED SUCCESFULLY")
+#-------------------XXXXXXXXXXXXXX---------------------------XX-------------------
+
+#LOGIN PAGE CONNECTION
+
+    def loginpg(pal):
+        cont=mysql.connect(host='localhost',user='root',password='123456',database='register_login')
+        cursor=cont.cursor()
+        username=pal.LusernameEntry.get()
+        password=pal.LpasswordEntry.get()
+        cursor.execute("select * from register where username=%s and password=%s",(username,password))
+        c=0
+        for i in cursor:
+            c=c+1
+        if c>=1:
+                cursor.execute("insert into login values(%s,%s)",(username,password))
+                cont.commit()
+
+                infowind=Tk()
+                infowind.title("ALL TOOLS OPTIONS")
+                infowind.geometry("1800x1800")
+                infowind.config(bg="yellow")
+
+                textinfo=Label(infowind,text="...........CHOOSE ANY OPTION GIVEN BELOW.......... ",bg="white",padx=20,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+                textinfo.place(x=500,y=90)
+
+                txtspeech=Button(infowind,text="TEXT TO SPEECH",padx=37,pady=10,font=("calibri",20,'bold'),relief="sunken",fg='blue',command=pal.txspeech)
+                txtspeech.place(x=650,y=200)
+
+                
+
+                cod=Button(infowind,text="SAVE MY CODE",padx=43,pady=10,font=("calibri",20,'bold'),relief="sunken",fg='blue',command=pal.mycode)
+                cod.place(x=650,y=300)
+
+                
+                
+        else:
+                    msg.showerror("login details","invalid user")
+#-----------------------------------------------------------------------
+#text to speech
+                    
+    def txspeech(pal):
+        txspeechwind=Tk()
+        txspeechwind.title("TEXT TO SPEECH")
+        txspeechwind.geometry("1800x1800")
+        txspeechwind.config(bg="red")
+        txtlabel=Label(txspeechwind,text="...........TEXT TO SPEECH.......... ",bg="white",padx=15,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+        txtlabel.place(x=620,y=90)
+        stxt=Label(txspeechwind,text="INPUT TEXT",bg="orange",padx=15,pady=20,font=("calibri",20,'bold'),relief='groove')
+        stxt.place(x=450,y=300)
+        msg=StringVar()
+        pal.txte=Entry(txspeechwind,textvariable=msg,font=('bold','20'))
+        pal.txte.place(x=650,y=318,width=300,height=50)
+        lbtn=Button(txspeechwind,text="SPEAK",padx=40,pady=10,bg="yellow",font=("Mohave",15,'bold'),relief='sunken',command=pal.Text_to_speech)
+        lbtn.place(x=700,y=500)
+#-------------------------------------------------------------------------------------------
+#text to speech function
+    def Text_to_speech(pal):
+        Message = pal.txte.get()
+        speech = gTTS(text = Message)
+        speech.save('Techarge.mp3')
+        playsound('Techarge.mp3')
+
+#----------------------------------------XXXXXXXXXXXXXXXXX---------------------------
+# suggestion window
+
+    def suggestion(pal):
+            suggestwind=Tk()
+            suggestwind.title("SUGGESTION BOX")
+            suggestwind.geometry("1800x1800")
+            suggestwind.config(bg="yellow")
+
+
+            textsugg=Label(suggestwind,text=".............SUGGESTION BOX............. ",bg="white",padx=30,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+            textsugg.place(x=610,y=90)
+        
+
+            Suggestl1=Label(suggestwind,text="TYPE HERE",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+            Suggestl1.place(x=650,y=250)
+
+            pal.SuggEntry=Entry(suggestwind,font=('bold','20'))
+            pal.SuggEntry.place(x=800,y=260,width=150,height=30)
+
+            namel1=Label(suggestwind,text="YOUR NAME",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+            namel1.place(x=650,y=350)
+
+            pal.nameEntry=Entry(suggestwind,font=('bold','20'))
+            pal.nameEntry.place(x=800,y=360,width=150,height=30)
+
+            SubmitSugg=Button(suggestwind,text="SUBMIT",padx=37,pady=10,font=("calibri",20,'bold'),relief="groove",fg='black',command=pal.suggest_con)
+            SubmitSugg.place(x=700,y=550)
+
+#-----------------------------------------------------------------------------------------
+#suggestion window connection------------
+    def suggest_con(pal):
+        cont=mysql.connect(host='localhost',user='root',password='123456',database='register_login')
+        cursor=cont.cursor()
+        
+        suggestion=pal.SuggEntry.get()
+        name=pal.nameEntry.get()
+        cursor.execute("insert into suggestionbox values(%s,%s)",(suggestion,name))
+        cont.commit()
+        cont.close()
+        msg.showinfo("THANKYOU FOR YOUR VALUEABLE SUGGESTION")
+
+#---------------------------------------------------------------------------------------------
+#info window
+    def info(pal):
+            infowind=Tk()
+            infowind.title("INFORMATION")
+            infowind.geometry("1800x1800")
+            infowind.config(bg="black")
+
+            textsugg=Label(infowind,text=".............INFORMATION ABOUT PROJECT AND DEVELOPER.............",bg="white",padx=225,font=("calibri",20,'bold'),relief="groove",fg='blue')
+            textsugg.place(x=350)
+            
+
+            
+            dinfo=Label(infowind,text=("-------------------Hello everyone-----------------\nThis is my project named All-in-One Tool\nI have utilized the knowledge I gained\nduring my 12th grade by using Python\nfor its development.I've incorporated\nPython's tkinter library for the user\ninterface and Google's gTTS library\nfor converting text to speech.\nI have used a DATABASE in this which\nis named register_login, and inside it,\nthere are --------------3 tables------------------\n----------------------1)Register---------------------\n----------------------2)Login-------------------------\n----------------------3)Suggestionbox------------\n------The Register table has 3 columns-----\n----------------------1)Username------------------\n----------------------2)Password-------------------\n----------------------3)EmailID----------------------\n-----The Login table has 2 columns----------\n----------------------1)Username------------------\n----------------------2)Password-------------------\n-----And the Suggestionbox table has------\n----------------------2 columns--------------------\n------------------------1)Suggestion---------------\n----------------------2)Name------------------------"),bg="lightgreen",font=("calibri",15,'bold'),relief='groove',justify="left")
+            dinfo.place(x=0)
+
+            text=Label(infowind,text="I've developed this project for individuals  aspiring to build a career in the IT field,especially those who are newcomers like me.I'm currently in my first year\n of B.Tech CSE.In this tool, I can store all my details such as my resume and the projects I've worked on.I can also add the projects  that I've completed, and\n I can seek  suggestions from others on what to add to enhance my profile.For instance, if I go for an interview at a company, they might ask about my\n accomplishments and request to see some of the projects I've worked on.With this tool, I can present all my projects together, making it easier to showcase \nmy skills and experiences--\n\n",bg="black",padx=0,font=("calibri",18,),relief="groove",fg='white',justify="left")
+            text.place(x=0,y=601)
+
+            rinfo=Label(infowind,text=("MY RESUME\nName:-PRIYANSHU TOMAR\nEmail:-priyanshutomar255@gmail.com \nMOB-9131991244 \nLINKEDIN:-linkedin.com/in/priyanshutomarx \nGitHub:-https://github.com/Priyanshut0mar"),bg="blue",font=("calibri",15,'bold','underline'),relief='groove',justify="center")
+            rinfo.place(x=750,y=50)
+            line1=Canvas(infowind,width=580,bg="black")
+            line1.create_text(300,130,justify='left',text='Summary:-'
+           'Pursuing Btech CSE from Kr Mangalam university.'
+           '\nB.Tech CSE student with a passion for leveraging my technical \nskills and knowledge to make a positive impact'
+           'in the field\nof technology and innovation.Skilled in programming \nlanguages such as Python and Java, and'
+           'experienced in database\nmanagement and web development. Actively seeking internships \nor entry-level positions'
+           'to apply my knowledge,learn from \nexperienced professionals, and further develop my technical\nproficiency.Open'
+           'to new connections and collaborations\nin the tech industry.',fill="yellow",font=("calibri",15,'bold','underline'))
+            line1.place(x=350,y=200)
+
+            line2=Canvas(infowind,width=580,bg="black")
+            line2.create_text(295,120,justify='left',text='Experience:-'
+'Self Taught..'
+'I have created many projects using\nPython and learned a lot from those projects. I faced difficulties \nat'
+'the beginning in understanding everything, but as I continued\nto practice and build projects, I realized'
+'how even a small \nchange can make a big difference in a project. I have created\nprojects like a library'
+'management system, flight booking system,\nhospital management system, and hotel management'
+'system.\nI tend to overthink and consider every detail to make my projects\n better',fill="yellow",font=("calibri",15,'bold','underline'))
+            line2.place(x=950,y=200)
+
+            line3=Canvas(infowind,width=390,height=125,bg="black")
+            line3.create_text(200,60,justify='left',text='Certifications:-'
+'Introduction to Programming \nUsing Python - LetsUpgrade Skills'
+'React.js ,\nPython (Programming Language),Tkinter,\nCascading Style Sheets (CSS),HTML'
+'\nGraphic Design,Project Management',fill="green",font=("calibri",15,'bold','underline'))
+            line3.place(x=750,y=450)
+          
+            
+    def mycode(pal):
+                codewind=Tk()
+                codewind.title("SAVE CODE PAGE")
+                codewind.geometry("1800x1800")
+                codewind.config(bg="yellow")
+
+                
+                textcode=Label(codewind,text="...........SAVE YOUR CODE HERE........... ",bg="white",padx=30,pady=20,font=("calibri",20,'bold'),relief="groove",fg='blue')
+                textcode.place(x=630,y=90)
+
+                typel=Label(codewind,text="TYPE HERE",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+                typel.place(x=650,y=250)
+
+                pal.codeEntry=Entry(codewind,font=('bold','20'))
+                pal.codeEntry.place(x=800,y=260,width=150,height=30)
+
+                datel=Label(codewind,text="ENTER DATE",bg="skyblue",padx=20,pady=15,font=('calibri',12,'bold'),relief='groove')
+                datel.place(x=650,y=350)
+
+                pal.dateEntry=Entry(codewind,font=('bold','20'))
+                pal.dateEntry.place(x=800,y=360,width=150,height=30)
+
+
+                Submitcode=Button(codewind,text="SAVE",padx=37,pady=10,font=("calibri",20,'bold'),relief="groove",fg='blue',command=pal.code_con)
+                Submitcode.place(x=725,y=450)
+
+#--------------------------------------------------------------------------------------------            
+    def code_con(pal):
+        cont=mysql.connect(host='localhost',user='root',password='123456',database='register_login')
+        cursor=cont.cursor()
+        
+        your_code=pal.codeEntry.get()
+        date=pal.dateEntry.get()
+        cursor.execute("insert into code values(%s,%s)",(your_code,date))
+        cont.commit()
+        cont.close()
+        msg.showinfo("YOUR CODE SAVED SUCCESFULLY")                  
+#----------------------------------------------------------------------------------------
+#window starting               
+            
+project=Tk()
+Rlw=LogWind(project)
+project.title("ALL IN ONE TOOL")
+image1=PhotoImage(file="C:/Users/acer/Pictures/project.png",)
+l2=Label(project,image=image1,relief='groove')
+l2.place(x=0,y=0)
+l1=Label(project,text="WELCOME TO OUR TOOL",bg="orange",padx=412,font=("calibri",20,'bold'),relief='groove',)
+l1.place(x=433)
+
+
+infol3=Label(project,text="\n---Hello Everyone---\n\nMY SELF PRIYANSHU TOMAR AND\nI AM THE DEVELOPER OF THIS TOOL\n\n ----EDUCATION----\nI AM CURRENTLY PURSUING B.TECH CSE\nFROM KR MANGALAM UNIVERSITY GURUGRAM\n\n----CONTACT----\n9131991244\n\n----EMAIL----\nPriyanshutomar255@Gmail.com\n\n----LINKEDIN----\nwww.linkedin.com/in/priyanshutomarx\n\n----GitHub----\nhttps://github.com/Priyanshut0mar\n\n\n",bg="cyan",padx=15.6,pady=0,font=("calibri",15,'bold'),relief='groove')
+infol3.place(x=0,y=214)
+
+
+
+
+
+project.mainloop()
